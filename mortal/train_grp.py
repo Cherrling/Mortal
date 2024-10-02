@@ -97,8 +97,9 @@ def train():
     optimizer = optim.AdamW(grp.parameters())
 
     state_file = cfg['state_file']
+    print(state_file)
     if path.exists(state_file):
-        state = torch.load(state_file, weights_only=True, map_location=device)
+        state = torch.load(state_file, weights_only=False, map_location=device)
         timestamp = datetime.fromtimestamp(state['timestamp']).strftime('%Y-%m-%d %H:%M:%S')
         logging.info(f'loaded: {timestamp}')
         grp.load_state_dict(state['model'])
@@ -113,12 +114,16 @@ def train():
     file_index = cfg['dataset']['file_index']
     train_globs = cfg['dataset']['train_globs']
     val_globs = cfg['dataset']['val_globs']
+    print(f"file_index: {file_index}")
     if path.exists(file_index):
-        index = torch.load(file_index, weights_only=True)
+    # if 0:
+        index = torch.load(file_index, weights_only=False)
         train_file_list = index['train_file_list']
         val_file_list = index['val_file_list']
     else:
         logging.info('building file index...')
+        print(f"train_globs: {train_globs}")
+        print(f"val_globs: {val_globs}")
         train_file_list = []
         val_file_list = []
         for pat in train_globs:
